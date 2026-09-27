@@ -1,30 +1,88 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
+  :root {
+    --font-serif-title: 'Playfair Display', 'Cinzel', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
   body {
-    @apply bg-slate-950 text-slate-100 antialiased;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
+    background-color: #0B0C0E;
+    color: #FFFFFF;
+    font-family: var(--font-sans);
+  }
+
+  .font-serif-title {
+    font-family: var(--font-serif-title);
   }
 }
 
-/* Custom scrollbar */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.shimmer-placeholder {
+  background: linear-gradient(90deg, #121317 25%, #1F212A 50%, #121317 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* Otimização de renderização para celular: pula layout de elementos fora de tela */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 320px;
+}
+
+/* Otimização touch para celulares */
+html, body {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Custom subtle scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: #0B0C0E;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #23252B;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #D4A359;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
