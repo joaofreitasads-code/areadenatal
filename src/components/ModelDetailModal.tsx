@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import {
   X,
   Download,
@@ -20,8 +20,11 @@ import {
   Image as ImageIcon,
 } from 'lucide-react';
 import { ChristmasModel } from '../data/driveModels';
-import { ThreeModelViewer } from './ThreeModelViewer';
 import { getHighResImage, getOptimizedThumb } from '../utils/imageOptimizer';
+
+const ThreeModelViewer = lazy(() =>
+  import('./ThreeModelViewer').then((m) => ({ default: m.ThreeModelViewer }))
+);
 
 interface ModelDetailModalProps {
   model: ChristmasModel | null;
@@ -127,14 +130,23 @@ export const ModelDetailModal: React.FC<ModelDetailModalProps> = ({
                     />
                     <div className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg text-[11px] text-slate-300 border border-white/10 flex items-center gap-1.5">
                       <ImageIcon className="w-3 h-3 text-[#D4A359]" />
-                      <span>Foto Real do Modelo</span>
+                      <span>{model.hasRealCover ? 'Foto Real do Modelo' : 'Preview Temático • STL no Drive'}</span>
                     </div>
                   </div>
                 ) : (
-                  <ThreeModelViewer
-                    modelTitle={model.title}
-                    category={model.category}
-                  />
+                  <Suspense
+                    fallback={
+                      <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-slate-400 text-xs">
+                        <span className="w-6 h-6 border-2 border-[#D4A359] border-t-transparent rounded-full animate-spin" />
+                        <span>Carregando visualizador 3D...</span>
+                      </div>
+                    }
+                  >
+                    <ThreeModelViewer
+                      modelTitle={model.title}
+                      category={model.category}
+                    />
+                  </Suspense>
                 )}
 
                 {/* Tab Switcher on top right */}

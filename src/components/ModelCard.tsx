@@ -70,6 +70,11 @@ export const ModelCard: React.FC<ModelCardProps> = ({
         )}
 
         <img
+          ref={(imgEl) => {
+            if (imgEl?.complete && !isLoaded && imgEl.naturalWidth > 0) {
+              handleImageLoad();
+            }
+          }}
           src={displaySrc}
           alt={model.title}
           referrerPolicy="no-referrer"
@@ -78,7 +83,7 @@ export const ModelCard: React.FC<ModelCardProps> = ({
           fetchPriority={priority ? 'high' : 'low'}
           onLoad={handleImageLoad}
           onError={handleImageError}
-          className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-105 ${
+          className={`w-full h-full object-cover transition-all duration-200 group-hover:scale-105 ${
             isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
         />
@@ -117,7 +122,7 @@ export const ModelCard: React.FC<ModelCardProps> = ({
             {model.title}
           </h3>
           <span className="text-[11px] text-[#8E909B] font-medium block truncate mt-0.5">
-            {model.categoryLabel} • {model.folderName}
+            {model.categoryLabel} • {model.tagType}
           </span>
         </div>
 

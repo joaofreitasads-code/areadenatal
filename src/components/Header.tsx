@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { CHRISTMAS_MODELS } from '../data/driveModels';
 import {
   Search,
   Bell,
@@ -30,10 +31,10 @@ export const Header: React.FC<HeaderProps> = ({
   const notifications = [
     {
       id: 1,
-      title: '100 Modelos Natalinos Sincronizados',
+      title: `${CHRISTMAS_MODELS.length} Modelos Natalinos Sincronizados`,
       time: 'Agora mesmo',
       unread: true,
-      text: 'Todos os 100 arquivos STL e imagens do Google Drive foram indexados com sucesso.',
+      text: `Todos os ${CHRISTMAS_MODELS.length} arquivos STL com fotos reais da coleção de Natal estão disponíveis.`,
     },
     {
       id: 2,
@@ -126,7 +127,7 @@ export const Header: React.FC<HeaderProps> = ({
           title="Abrir Pasta Oficial no Google Drive"
         >
           <FolderDown className="w-3.5 h-3.5" />
-          <span>Drive Oficial (100 STL)</span>
+          <span>Drive Oficial ({CHRISTMAS_MODELS.length} STL)</span>
           <ExternalLink className="w-3 h-3 opacity-60" />
         </a>
 

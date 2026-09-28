@@ -1,4 +1,5 @@
 import React from 'react';
+import { CHRISTMAS_MODELS } from '../data/driveModels';
 import {
   Home,
   User,
@@ -250,13 +251,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           <p className="text-xs text-white font-bold leading-tight">
-            100 Modelos Natalinos STL
+            {CHRISTMAS_MODELS.length} Modelos Natalinos STL
           </p>
 
           <div className="space-y-1">
             <div className="flex justify-between text-[10px] text-slate-400">
               <span>Drive Sincronizado</span>
-              <span className="text-[#E5B869] font-mono font-bold">100 / 100</span>
+              <span className="text-[#E5B869] font-mono font-bold">{CHRISTMAS_MODELS.length} / {CHRISTMAS_MODELS.length}</span>
             </div>
             <div className="w-full h-1.5 bg-[#20222A] rounded-full overflow-hidden">
               <div className="w-full h-full bg-gradient-to-r from-[#D4A359] to-emerald-400 rounded-full" />

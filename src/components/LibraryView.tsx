@@ -50,8 +50,8 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
   const [sortBy, setSortBy] = useState<'recent' | 'downloads' | 'time' | 'weight'>('recent');
   const [supportFilter, setSupportFilter] = useState<'all' | 'none' | 'tree'>('all');
   
-  // Renderização em lotes de 20 para carregamento instantâneo em 60fps no celular
-  const [visibleCount, setVisibleCount] = useState<number>(20);
+  // Renderização em lotes de 24 (múltiplo de 2, 3 e 4 colunas) para 60fps instantâneo
+  const [visibleCount, setVisibleCount] = useState<number>(24);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   const favoritesSet = useMemo(() => new Set(favorites), [favorites]);
@@ -103,7 +103,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
       default:
         return {
           title: 'Biblioteca por categorias',
-          subtitle: '100 modelos 3D exclusivos de Natal para imprimir, decorar e lucrar nesta temporada.',
+          subtitle: `${models.length} modelos 3D exclusivos de Natal para imprimir, decorar e lucrar nesta temporada.`,
         };
     }
   };
@@ -167,7 +167,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
 
   // Reset visual batch when filters change
   useEffect(() => {
-    setVisibleCount(20);
+    setVisibleCount(24);
   }, [currentSidebarCategory, selectedPill, searchQuery, sortBy, supportFilter]);
 
   // Pre-carrega imagens críticas das primeiras posições
@@ -177,16 +177,26 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
     }
   }, [filteredModels]);
 
-  // Infinite scroll inteligente com IntersectionObserver (antecipa 400px antes do rodapé)
+  // Antecipa download do próximo lote ao rolar a tela
+  useEffect(() => {
+    if (visibleCount < filteredModels.length) {
+      const nextBatchUrls = filteredModels
+        .slice(visibleCount, visibleCount + 16)
+        .map((m) => m.imageUrl);
+      preloadCriticalImages(nextBatchUrls);
+    }
+  }, [visibleCount, filteredModels]);
+
+  // Infinite scroll ultra responsivo com IntersectionObserver (antecipa 900px antes do rodapé)
   useEffect(() => {
     if (!sentinelRef.current) return;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          setVisibleCount((prev) => Math.min(prev + 20, filteredModels.length));
+          setVisibleCount((prev) => Math.min(prev + 24, filteredModels.length));
         }
       },
-      { rootMargin: '400px' }
+      { rootMargin: '900px' }
     );
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
@@ -212,7 +222,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
         {/* Counter Badge Pill on Top Right with Fast Mode indicator */}
         <div className="flex items-center gap-2 self-start shrink-0 bg-[#16171C] border border-[#262831] px-3 py-1.5 rounded-full shadow-inner">
           <Zap className="w-3.5 h-3.5 text-[#E5B869] animate-pulse" />
-          <span className="text-xs font-bold text-[#E5B869]">100 arquivos</span>
+          <span className="text-xs font-bold text-[#E5B869]">{models.length} arquivos</span>
           <span className="text-slate-500 text-xs hidden sm:inline">•</span>
           <span className="text-[11px] text-emerald-400 font-semibold hidden sm:inline">Modo Turbo 60FPS</span>
         </div>
@@ -263,7 +273,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
               onChange={(e) => setSortBy(e.target.value as any)}
               className="w-full bg-transparent text-slate-300 focus:outline-none cursor-pointer pr-1"
             >
-              <option value="recent" className="bg-[#16171B] text-white">Ordem (#01 a #100)</option>
+              <option value="recent" className="bg-[#16171B] text-white">Ordem Original</option>
               <option value="downloads" className="bg-[#16171B] text-white">Mais Baixados</option>
               <option value="time" className="bg-[#16171B] text-white">Menor Tempo</option>
               <option value="weight" className="bg-[#16171B] text-white">Menor Peso (g)</option>
@@ -297,7 +307,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
                 onToggleFavorite={onToggleFavorite}
                 onOpenModel={onOpenModel}
                 onDirectDownload={onDirectDownload}
-                priority={index < 4}
+                priority={index < 8}
               />
             ))}
           </div>
